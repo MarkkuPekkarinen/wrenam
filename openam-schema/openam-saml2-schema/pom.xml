@@ -13,24 +13,22 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Copyright 2011-2016 ForgeRock AS.
+ * Portions Copyright 2018-2023 Wren Security
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Parent Project -->
     <parent>
-        <groupId>org.forgerock.openam</groupId>
+        <groupId>org.wrensecurity.wrenam</groupId>
         <artifactId>openam-schema</artifactId>
-        <version>14.0.0-SNAPSHOT</version>
+        <version>15.0.0-M4-SNAPSHOT</version>
     </parent>
 
-    <!-- Component Definition -->
-    <name>OpenAM SAML2 Schema</name>
-    <description>OpenAM SAML2 Schema Components</description>
     <artifactId>openam-saml2-schema</artifactId>
-    <packaging>jar</packaging>
 
-    <!-- Build -->
+    <name>Wren:AM - SAML2 Schema</name>
+    <description>Wren:AM SAML2 Schema Components</description>
+
     <build>
         <plugins>
 <!--
@@ -63,11 +61,10 @@
 -->
         </plugins>
     </build>
-
     
     <dependencies>
         <dependency>
-            <groupId>org.forgerock.openam</groupId>
+            <groupId>org.wrensecurity.wrenam</groupId>
             <artifactId>openam-shared</artifactId>
         </dependency>
 
@@ -83,13 +80,7 @@
 
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-libs</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-xjc</artifactId>
+            <artifactId>jaxb-impl</artifactId>
         </dependency>
     </dependencies>
 </project>
-

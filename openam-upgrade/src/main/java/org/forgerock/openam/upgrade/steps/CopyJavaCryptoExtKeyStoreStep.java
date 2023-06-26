@@ -11,7 +11,7 @@
  * Header, with the fields enclosed by brackets [] replaced by your own identifying
  * information: "Portions copyright [year] [name of copyright owner]".
  *
- * Copyright 2016 ForgeRock AS.
+ * Copyright 2016-2017 ForgeRock AS.
  */
 package org.forgerock.openam.upgrade.steps;
 
@@ -59,7 +59,7 @@ public final class CopyJavaCryptoExtKeyStoreStep extends AbstractUpgradeStep {
     private final static String AUDIT_SUCCESS = "upgrade.copy.keystore.to.configuration.success";
     private final static String AUDIT_FAILURE = "upgrade.copy.keystore.to.configuration.failure";
 
-    private static final int AM_13_5 = 1350;
+    private static final String AM_13_5 = "13.5.0";
 
     private static final String KEYSTORE_NAME = "keystore.jceks";
     private static final String KEYSTORE_PATH = "/WEB-INF/template/keystore/" + KEYSTORE_NAME;

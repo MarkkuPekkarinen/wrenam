@@ -12,12 +12,17 @@
  * the License file at legal/CDDLv1.0.txt. If applicable, add the following below the CDDL
  * Header, with the fields enclosed by brackets [] replaced by your own identifying
  * information: "Portions copyright [year] [name of copyright owner]".
+ *
+ * Portions Copyright 2023 Wren Security
  */
 package org.forgerock.openam.cts.api.fields;
+
+import static java.util.Collections.singleton;
 
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Set;
 
 import org.forgerock.openam.cts.api.CoreTokenConstants;
 import org.forgerock.openam.cts.exceptions.CoreTokenException;
@@ -38,7 +43,7 @@ public class CoreTokenFieldTypes {
      * Validate a collection of key/value mappings.
      *
      * @param types A mapping of CoreTokenField to value. Non null, may be empty.
-     * @throws org.forgerock.openam.sm.datalayer.api.LdapOperationFailedException If one of the values was invalid for the CoreTokenField field.
+     * @throws CoreTokenException If one of the values was invalid for the CoreTokenField field.
      */
     public static void validateTypes(Map<CoreTokenField, Object> types) throws CoreTokenException {
         for (Map.Entry<CoreTokenField, Object> entry : types.entrySet()) {
@@ -51,7 +56,6 @@ public class CoreTokenFieldTypes {
      *
      * @param field The CoreTokenField to validate against.
      * @param value The value to verify. Non null.
-     * @throws org.forgerock.openam.sm.datalayer.api.LdapOperationFailedException
      */
     public static void validateType(CoreTokenField field, Object value) throws CoreTokenException {
         if (value == null) {
@@ -64,27 +68,64 @@ public class CoreTokenFieldTypes {
                     field.name()));
         }
 
-        Class<?> expectedType;
-        if (isString(field)) {
-            expectedType = String.class;
+        if (isMulti(field)) {
+            validateMultiStringType(field, value);
+        } else if (isString(field)) {
+            validateSingleType(field, value, String.class);
         } else if (isInteger(field)) {
-            expectedType = Integer.class;
+            validateSingleType(field, value, Integer.class);
         } else if (isCalendar(field)) {
-            expectedType = Calendar.class;
+            validateSingleType(field, value, Calendar.class);
         } else if (isByteArray(field)) {
-            expectedType = byte[].class;
+            validateSingleType(field, value, byte[].class);
         } else {
             throw new IllegalStateException("Unknown field: " + field.name());
         }
+    }
 
+    private static void validateMultiStringType(CoreTokenField field, Object value) throws CoreTokenException {
+        if (value instanceof String) {
+            return;
+        }
+
+        if (!(value instanceof Set)) {
+            throw new CoreTokenException(MessageFormat.format(
+                    "\n" +
+                            CoreTokenConstants.DEBUG_HEADER +
+                            "Value was not the correct type:\n" +
+                            "           Key: {0}:{1}\n" +
+                            "Required Class: String or Set<String>\n" +
+                            "  Actual Class: {2}",
+                    CoreTokenField.class.getSimpleName(),
+                    field.name(),
+                    value.getClass().getName()));
+        }
+
+        for (Object setValue : (Set) value) {
+            if (!(setValue instanceof String)) {
+                throw new CoreTokenException(MessageFormat.format(
+                        "\n" +
+                                CoreTokenConstants.DEBUG_HEADER +
+                                "Value set contains an invalidate type:\n" +
+                                "           Key: {0}:{1}\n" +
+                                "Required Class: String\n" +
+                                "  Actual Class: {2}",
+                        CoreTokenField.class.getSimpleName(),
+                        field.name(),
+                        setValue.getClass().getName()));
+            }
+        }
+    }
+
+    private static void validateSingleType(CoreTokenField field, Object value, Class<?> expectedType) throws CoreTokenException {
         if (!expectedType.isAssignableFrom(value.getClass())) {
             throw new CoreTokenException(MessageFormat.format(
                     "\n" +
-                    CoreTokenConstants.DEBUG_HEADER +
-                    "Value was not the correct type:\n" +
-                    "           Key: {0}:{1}\n" +
-                    "Required Class: {2}" +
-                    "  Actual Class: {3}",
+                            CoreTokenConstants.DEBUG_HEADER +
+                            "Value was not the correct type:\n" +
+                            "           Key: {0}:{1}\n" +
+                            "Required Class: {2}" +
+                            "  Actual Class: {3}",
                     CoreTokenField.class.getSimpleName(),
                     field.name(),
                     expectedType.getName(),
@@ -159,9 +200,6 @@ public class CoreTokenFieldTypes {
             case STRING_THIRTEEN:
             case STRING_FOURTEEN:
             case STRING_FIFTEEN:
-            case MULTI_STRING_ONE:
-            case MULTI_STRING_TWO:
-            case MULTI_STRING_THREE:
                 return true;
             default:
                 return false;

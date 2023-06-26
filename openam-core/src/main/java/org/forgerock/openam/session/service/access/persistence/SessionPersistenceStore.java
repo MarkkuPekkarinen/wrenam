@@ -12,6 +12,7 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Copyright 2016 ForgeRock AS.
+ * Portions copyright 2022-2023 Wren Security
  */
 
 package org.forgerock.openam.session.service.access.persistence;
@@ -32,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.forgerock.guava.common.collect.ImmutableMap;
+import org.wrensecurity.guava.common.collect.ImmutableMap;
 import org.forgerock.guice.core.InjectorHolder;
 import org.forgerock.json.JsonPointer;
 import org.forgerock.openam.cts.CTSPersistentStore;
@@ -281,7 +282,7 @@ public class SessionPersistenceStore {
 
     /**
      * Returns the expiration information of all sessions belonging to a user
-     * (uuid). The returned value will be a Map (sid->expiration_time).
+     * (uuid). The returned value will be a Map (sid-&gt;expiration_time).
      *
      * @param uuid
      *            User's universal unique ID.

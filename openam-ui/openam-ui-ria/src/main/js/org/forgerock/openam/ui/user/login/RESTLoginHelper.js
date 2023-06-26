@@ -11,7 +11,7 @@
  * Header, with the fields enclosed by brackets [] replaced by your own identifying
  * information: "Portions copyright [year] [name of copyright owner]".
  *
- * Portions copyright 2011-2016 ForgeRock AS.
+ * Portions copyright 2011-2017 ForgeRock AS.
  */
 
 define([
@@ -29,10 +29,9 @@ define([
     "org/forgerock/openam/ui/user/services/SessionService",
     "org/forgerock/openam/ui/user/UserModel",
     "org/forgerock/openam/ui/user/login/logout",
-    "org/forgerock/openam/ui/common/util/uri/query",
-    "org/forgerock/openam/ui/user/login/gotoUrl"
+    "org/forgerock/openam/ui/common/util/uri/query"
 ], ($, _, AbstractConfigurationAware, Configuration, ServiceInvoker, ViewManager, Constants, URIUtils,
-    fetchUrl, SessionToken, AuthNService, SessionService, UserModel, logout, query, gotoUrl) => {
+    fetchUrl, SessionToken, AuthNService, SessionService, UserModel, logout, query) => {
     var obj = new AbstractConfigurationAware();
 
     obj.login = function (params, successCallback, errorCallback) {
@@ -125,12 +124,11 @@ define([
         return query.parseParameters(paramString);
     };
 
-
     obj.setSuccessURL = function (tokenId, successUrl) {
         const promise = $.Deferred();
         let context = "";
 
-        const goto = query.parseParameters().goto;
+        const goto = query.parseParameters(URIUtils.getCurrentFragmentQueryString()).goto;
 
         if (goto) {
             AuthNService.validateGotoUrl(goto).then((data) => {
@@ -138,7 +136,7 @@ define([
                     data.successURL.indexOf(`/${Constants.context}`) !== 0) {
                     context = `/${Constants.context}`;
                 }
-                gotoUrl.set(encodeURIComponent(context + data.successURL));
+                Configuration.globalData.auth.validatedGoto = context + data.successURL;
                 promise.resolve();
             }, () => {
                 promise.reject();
@@ -149,8 +147,8 @@ define([
                     Configuration.globalData.auth.urlParams = {};
                 }
 
-                if (!gotoUrl.exists()) {
-                    gotoUrl.set(successUrl);
+                if (!Configuration.globalData.auth.validatedGoto) {
+                    Configuration.globalData.auth.validatedGoto = successUrl;
                 }
             }
             promise.resolve();

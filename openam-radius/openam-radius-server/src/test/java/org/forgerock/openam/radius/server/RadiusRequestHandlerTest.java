@@ -12,14 +12,13 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Copyrighted 2015 Intellectual Reserve, Inc (IRI)
- */
-/*
  * Portions copyright 2015 ForgeRock AS
+ * Portions copyright 2022 Wren Security
  */
 
 package org.forgerock.openam.radius.server;
 
-import org.forgerock.guava.common.eventbus.EventBus;
+import org.wrensecurity.guava.common.eventbus.EventBus;
 import org.forgerock.openam.radius.common.AccessAccept;
 import org.forgerock.openam.radius.common.AccessReject;
 import org.forgerock.openam.radius.common.Packet;
@@ -34,7 +33,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;

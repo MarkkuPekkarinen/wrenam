@@ -12,6 +12,7 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Copyright 2016 ForgeRock AS.
+ * Portions Copyright 2021 Wren Security.
  */
 
 package org.forgerock.openam.session.service.access.persistence.caching;
@@ -25,14 +26,14 @@ import org.forgerock.openam.session.service.access.persistence.SessionPersistenc
 import org.forgerock.openam.session.service.access.persistence.TimeOutSessionFilterStep;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.wrensecurity.wrenam.test.AbstractMockBasedTest;
 
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.dpro.session.service.InternalSession;
 
-public class TimedOutSessionFilterStepTest {
+public class TimedOutSessionFilterStepTest extends AbstractMockBasedTest {
 
     private static String TIMED_OUT_SESSSION_ID = "timedouthandle";
     private static String NOT_TIMED_OUT_SESSSION_ID = "nottimedouthandle";
@@ -55,20 +56,9 @@ public class TimedOutSessionFilterStepTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-
         // Define timed out and not timed out sessions
         when(timedOutSession.isTimedOut()).thenReturn(true);
-        when(timedOutSession.willExpire()).thenReturn(true);
-        when(timedOutSession.getTimeLeft()).thenReturn(0L);
-        when(timedOutSession.getMaxIdleTime()).thenReturn(1L);
-        when(timedOutSession.getIdleTime()).thenReturn(10L);
-
         when(notTimedOutSession.isTimedOut()).thenReturn(false);
-        when(notTimedOutSession.willExpire()).thenReturn(false);
-        when(notTimedOutSession.getTimeLeft()).thenReturn(100000L);
-        when(notTimedOutSession.getMaxIdleTime()).thenReturn(100000L);
-        when(notTimedOutSession.getIdleTime()).thenReturn(1L);
 
         // set up next step to return default timed out and not timed out session
         when(mockNextStep.getByHandle(Mockito.eq(TIMED_OUT_SESSSION_ID))).thenReturn(timedOutSession);
@@ -141,93 +131,4 @@ public class TimedOutSessionFilterStepTest {
         assertNull(byRestrictedID, "TimeOutSessionFilterStep.getByRestrictedID did not return null for an invalid session identifier");
     }
 
-    @Test
-    public void shouldStillReturnSessionsThatHaveNotTimedOutWithWillExpireTurnedOn() throws SessionPersistenceException {
-
-        // if
-        when(notTimedOutSession.willExpire()).thenReturn(false);
-        // when
-        final InternalSession byHandleWithWillExpireOn = testClass.getByHandle(NOT_TIMED_OUT_SESSSION_ID, mockNextStep);
-        // then
-        assertNotNull(byHandleWithWillExpireOn, "TimeOutSessionFilterStep.getByHandle " +
-                "failed to get a non timed out session - will expire is on but session should not be expired");
-    }
-
-    @Test
-    public void shouldStillReturnSessionsThatHaveNotTimedOutWithTimeleftOf0AndWillExpireTurnedOff() throws SessionPersistenceException {
-
-        // if
-        when(notTimedOutSession.getTimeLeft()).thenReturn(0L);
-        // when
-        final InternalSession byHandleWithWillExpireOn = testClass.getByHandle(NOT_TIMED_OUT_SESSSION_ID, mockNextStep);
-        // then
-        assertNotNull(byHandleWithWillExpireOn, "TimeOutSessionFilterStep.getByHandle " +
-                "failed to get a non timed out session - time left is 0 but will expire is off");
-
-    }
-
-    @Test
-    public void shouldNotReturnSessionsIfWillExpireIsOnAndTheTimeleftIs0() throws SessionPersistenceException {
-
-        // if
-        when(notTimedOutSession.willExpire()).thenReturn(true);
-        when(notTimedOutSession.getTimeLeft()).thenReturn(0L);
-        // when
-        final InternalSession byHandleWithWillExpireOn = testClass.getByHandle(NOT_TIMED_OUT_SESSSION_ID, mockNextStep);
-        // then
-        assertNull(byHandleWithWillExpireOn, "TimeOutSessionFilterStep.getByHandle " +
-                "failed to filter a session - will expire is on, time left is 0");
-    }
-
-    @Test
-    public void shouldStillReturnSessionsThatHaveAMaxIdleTimeBlowTheCurrentIdleTimeIfWillExpireIsOff() throws SessionPersistenceException {
-
-        // if
-        when(notTimedOutSession.getMaxIdleTime()).thenReturn(10L);
-        when(notTimedOutSession.getIdleTime()).thenReturn(100L);
-        // when
-        final InternalSession byHandleWithWillExpireOffAndMaxIdleLessThanIdle = testClass.getByHandle(NOT_TIMED_OUT_SESSSION_ID, mockNextStep);
-        // then
-        assertNotNull(byHandleWithWillExpireOffAndMaxIdleLessThanIdle, "TimeOutSessionFilterStep.getByHandle " +
-                "failed to get a non timed out session - max idle < current idle but will expire is off");
-    }
-
-    @Test
-    public void shouldNotReturnSessionsThatHaveAMaxIdleTimeBlowTheCurrentIdleTimeWhenWillExpireIsOff() throws SessionPersistenceException {
-
-        // if
-        when(notTimedOutSession.willExpire()).thenReturn(true);
-        when(notTimedOutSession.getMaxIdleTime()).thenReturn(1L);
-        when(notTimedOutSession.getIdleTime()).thenReturn(1000L);
-        // when
-        final InternalSession byHandleWithWillExpireOnAndMaxIdleLessThanIdle = testClass.getByHandle(NOT_TIMED_OUT_SESSSION_ID, mockNextStep);
-        // then
-        assertNull(byHandleWithWillExpireOnAndMaxIdleLessThanIdle, "TimeOutSessionFilterStep.getByHandle " +
-                "failed to filter a session - will expire on, max idle < current idle");
-    }
-
-    @Test
-    public void shouldNotReturnSessionsThatHavebeenSetToTimedOut() throws SessionPersistenceException {
-
-        // if
-        when(notTimedOutSession.willExpire()).thenReturn(true);
-        when(notTimedOutSession.isTimedOut()).thenReturn(true);
-        // when
-        final InternalSession byHandleWithWillExpireOffAndMaxIdleLessThanIdle = testClass.getByHandle(NOT_TIMED_OUT_SESSSION_ID, mockNextStep);
-        // then
-        assertNull(byHandleWithWillExpireOffAndMaxIdleLessThanIdle, "TimeOutSessionFilterStep.getByHandle " +
-                "failed to filter out session - timed out set to true");
-    }
-
-    @Test
-    public void shouldNotReturnSessionsThatHaveBeenSetToTimedOutEvenIfWillExpireIsOff() throws SessionPersistenceException {
-
-        // if
-        when(notTimedOutSession.isTimedOut()).thenReturn(true);
-        // when
-        final InternalSession byHandleWithWillExpireOffAndMaxIdleLessThanIdle = testClass.getByHandle(NOT_TIMED_OUT_SESSSION_ID, mockNextStep);
-        // then
-        assertNull(byHandleWithWillExpireOffAndMaxIdleLessThanIdle, "TimeOutSessionFilterStep.getByHandle " +
-                "failed to filter out session - timed out set to true");
-    }
 }

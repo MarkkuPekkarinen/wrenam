@@ -12,11 +12,12 @@
  * information: "Portions Copyrighted [year] [name of copyright owner]".
  *
  * Copyright 2013-2015 ForgeRock AS.
+ * Portions Copyrighted 2022 Wren Security
  */
 
 package org.forgerock.openam.sts.soap.config.user;
 
-import org.forgerock.guava.common.base.Objects;
+import org.wrensecurity.guava.common.base.Objects;
 import org.forgerock.json.JsonValue;
 
 import javax.xml.namespace.QName;
@@ -312,8 +313,8 @@ public class SoapDeploymentConfig extends DeploymentConfig {
     }
 
     /**
-     * Used by the sts-publish serviceQName to marshal a SoapDeploymentConfig instance to the Map<String, Set<String>>
-     * representation required by the SMS.
+     * Used by the sts-publish serviceQName to marshal a SoapDeploymentConfig instance to the 
+     * {@code Map<String, Set<String>>} representation required by the SMS.
      * @return a Map containing the state of the SoapDeploymentConfig instance in the format consumed by the SMS.
      */
     public Map<String, Set<String>> marshalToAttributeMap() {
@@ -329,7 +330,7 @@ public class SoapDeploymentConfig extends DeploymentConfig {
     }
 
     /**
-     * Used by the sts-publish serviceQName to marshal the Map<String, Set<String>> returned by the SMS to a SoapDeploymentConfig
+     * Used by the sts-publish serviceQName to marshal the {@code Map<String, Set<String>>} returned by the SMS to a SoapDeploymentConfig
      * instance. Used as part of generating the json representation of published soap-sts instances returned by the
      * sts-publish serviceQName.
      * @return A SoapDeploymentConfig instance corresponding to Map state.

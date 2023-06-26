@@ -12,6 +12,7 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Copyright 2015 ForgeRock AS.
+ * Portions copyright 2022 Wren Security
  */
 
 package org.forgerock.openam.upgrade.steps;
@@ -31,7 +32,7 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 
-import org.forgerock.guava.common.base.Joiner;
+import org.wrensecurity.guava.common.base.Joiner;
 import org.forgerock.openam.sm.datalayer.api.ConnectionFactory;
 import org.forgerock.openam.sm.datalayer.api.ConnectionType;
 import org.forgerock.openam.sm.datalayer.api.DataLayer;
@@ -113,7 +114,7 @@ public class RemoveNetscapeLDAPStep extends AbstractUpgradeStep {
             "sun-idrepo-ldapv3-config-service-attributes"
     );
 
-    private static final int AM_13 = 1300;
+    private static final String AM_13 = "13.0.0";
     public static final String NETSCAPE_LDAP_V3 = "NetscapeLDAPv3";
 
     private final Map<String, Set<String>> subSchemaIds = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);

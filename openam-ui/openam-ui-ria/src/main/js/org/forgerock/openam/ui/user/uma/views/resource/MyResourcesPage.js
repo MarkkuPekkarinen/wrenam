@@ -1,4 +1,4 @@
-/**
+/*
  * The contents of this file are subject to the terms of the Common Development and
  * Distribution License (the License). You may not use this file except in compliance with the
  * License.
@@ -11,7 +11,7 @@
  * Header, with the fields enclosed by brackets [] replaced by your own identifying
  * information: "Portions copyright [year] [name of copyright owner]".
  *
- * Copyright 2015-2016 ForgeRock AS.
+ * Copyright 2015-2017 ForgeRock AS.
  */
 
 define([
@@ -36,7 +36,6 @@ define([
             this.$el.find("button#unshareAllResources").prop("disabled", false);
         },
         render (args, callback) {
-
             this.data.labelId = args[1];
             this.data.topLevel = args[1] === "";
             this.renderResources(callback);
@@ -58,7 +57,6 @@ define([
                     self.renderGrid(self.createLabelCollection(this.data.labelId), columns, callback);
                 });
             }
-
         },
         unshareAllResources () {
             var self = this,

@@ -12,18 +12,23 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Copyright 2016 ForgeRock AS.
+ * Portions Copyright 2021 Wren Security.
  */
 
 package com.iplanet.dpro.session.service;
 
-import static java.util.concurrent.TimeUnit.*;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
-
-import java.util.concurrent.TimeUnit;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import org.forgerock.openam.session.SessionEventType;
 import org.forgerock.openam.utils.TimeTravelUtil;
@@ -31,10 +36,10 @@ import org.forgerock.openam.utils.TimeTravelUtil.FrozenTimeService;
 import org.forgerock.util.time.TimeService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.wrensecurity.wrenam.test.AbstractMockBasedTest;
 
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.SessionID;
@@ -42,7 +47,7 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.session.util.SessionUtilsWrapper;
 import com.sun.identity.shared.debug.Debug;
 
-public class InternalSessionTest {
+public class InternalSessionTest extends AbstractMockBasedTest {
 
     @Mock private SessionService mockSessionService;
     @Mock private SessionServiceConfig mockSessionServiceConfig;
@@ -53,7 +58,6 @@ public class InternalSessionTest {
 
     @BeforeMethod
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         TimeTravelUtil.setBackingTimeService(FrozenTimeService.INSTANCE);
         FrozenTimeService.INSTANCE.setCurrentTimeMillis(0);
     }
@@ -251,6 +255,86 @@ public class InternalSessionTest {
 
         // Then idle expiration time should occur at "21 minutes"
         assertThat(session.getMaxIdleExpirationTime(MINUTES)).isEqualTo(21);
+    }
+
+    @Test
+    public void when_TimedOutTimeInSecondsIsSet_isTimedOut_WillReturnTrue() throws Exception {
+        InternalSession session = createSession();
+        session.setTimedOutTime(1000L);
+
+        assertThat(session.isTimedOut()).isTrue();
+    }
+
+    @Test
+    public void when_SessionMaxTimeJustBeforeMaxSessionLifeTime_isTimedOut_WillReturnFalse() throws Exception {
+        InternalSession session = createSession();
+        session.setTimedOutTime(0L);
+        session.setMaxSessionTime(2L);
+
+        FrozenTimeService.INSTANCE.fastForward(119999, MILLISECONDS);
+
+        assertThat(session.isTimedOut()).isFalse();
+    }
+
+    @Test
+    public void when_SessionMaxTimeMatchesMaxSessionLifeTime_isTimedOut_WillReturnTrue() throws Exception {
+        InternalSession session = createSession();
+        session.setTimedOutTime(0L);
+        session.setMaxSessionTime(2L);
+
+        FrozenTimeService.INSTANCE.fastForward(2, MINUTES);
+
+        assertThat(session.isTimedOut()).isTrue();
+    }
+
+    @Test
+    public void when_SessionMaxTimeExceedsMaxSessionLifeTime_isTimedOut_WillReturnTrue() throws Exception {
+        InternalSession session = createSession();
+        session.setTimedOutTime(0L);
+        session.setMaxSessionTime(2L);
+
+        FrozenTimeService.INSTANCE.fastForward(120001, MILLISECONDS);
+
+        assertThat(session.isTimedOut()).isTrue();
+    }
+
+    @Test
+    public void when_SessionIdleTimeJustBeforeMaxIdleTime_isTimedOut_WillReturnFalse() throws Exception {
+        InternalSession session = createSession();
+        session.setTimedOutTime(0L);
+        session.setMaxSessionTime(5L);
+        session.setLatestAccessTime();
+        session.setMaxIdleTime(2L);
+
+        FrozenTimeService.INSTANCE.fastForward(119999, MILLISECONDS);
+
+        assertThat(session.isTimedOut()).isFalse();
+    }
+
+    @Test
+    public void when_SessionIdleTimeMatchesMaxIdleTime_isTimedOut_WillReturnTrue() throws Exception {
+        InternalSession session = createSession();
+        session.setTimedOutTime(0L);
+        session.setMaxSessionTime(5L);
+        session.setLatestAccessTime();
+        session.setMaxIdleTime(2L);
+
+        FrozenTimeService.INSTANCE.fastForward(2, MINUTES);
+
+        assertThat(session.isTimedOut()).isTrue();
+    }
+
+    @Test
+    public void when_SessionIdleTimeExceedsMaxIdleTime_isTimedOut_WillReturnTrue() throws Exception {
+        InternalSession session = createSession();
+        session.setTimedOutTime(0L);
+        session.setMaxSessionTime(5L);
+        session.setLatestAccessTime();
+        session.setMaxIdleTime(2L);
+
+        FrozenTimeService.INSTANCE.fastForward(120001, MILLISECONDS);
+
+        assertThat(session.isTimedOut()).isTrue();
     }
 
     private void verifyEvent(InternalSession session, SessionEventType eventType) {

@@ -12,6 +12,7 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Copyright 2014-2016 ForgeRock AS.
+ * Portions Copyright 2021 Wren Security.
  */
 
 package org.forgerock.openam.entitlement.rest;
@@ -23,8 +24,8 @@ import static org.forgerock.openam.utils.CollectionUtils.*;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.BDDMockito.never;
 import static org.mockito.BDDMockito.times;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -215,7 +216,7 @@ public class ApplicationsResourceTest {
         Subject subject = new Subject();
         given(mockSSOTokenContext.getCallerSubject()).willReturn(subject);
         given(applicationWrapper.getName()).willReturn("newApplication");
-        doThrow(new EntitlementException(1)).when(applicationService).saveApplication(any(Application.class));
+        doThrow(new EntitlementException(1)).when(applicationService).saveApplication(any());
 
         //when
         Promise<ResourceResponse, ResourceException> result =

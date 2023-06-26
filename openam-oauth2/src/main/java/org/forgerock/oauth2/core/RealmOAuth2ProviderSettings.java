@@ -13,6 +13,7 @@
  *
  * Copyright 2014-2016 ForgeRock AS.
  * Portions Copyrighted 2015 Nomura Research Institute, Ltd.
+ * Portions Copyright 2023 Wren Security.
  */
 
 package org.forgerock.oauth2.core;
@@ -44,6 +45,7 @@ import org.forgerock.json.JsonValue;
 import org.forgerock.json.jose.jwk.KeyUse;
 import org.forgerock.json.jose.jws.JwsAlgorithm;
 import org.forgerock.json.jose.jws.SupportedEllipticCurve;
+import org.forgerock.json.jose.utils.BigIntegerUtils;
 import org.forgerock.oauth2.core.exceptions.InvalidClientException;
 import org.forgerock.oauth2.core.exceptions.InvalidRequestException;
 import org.forgerock.oauth2.core.exceptions.InvalidScopeException;
@@ -645,7 +647,7 @@ public class RealmOAuth2ProviderSettings implements OAuth2ProviderSettings {
         String kid = Hash.hash(alias + key.getModulus().toString() + key.getPublicExponent().toString());
         return json(object(field("kty", "RSA"), field(OAuth2Constants.JWTTokenParams.KEY_ID, kid),
                 field("use", use.toString()), field("alg", alg),
-                field("n", Base64url.encode(key.getModulus().toByteArray())),
+                field("n", Base64url.encode(BigIntegerUtils.toBytesUnsigned(key.getModulus()))),
                 field("e", Base64url.encode(key.getPublicExponent().toByteArray())))).asMap();
     }
 
@@ -970,6 +972,8 @@ public class RealmOAuth2ProviderSettings implements OAuth2ProviderSettings {
                     attributeCache.clear();
                     jwks.clear();
                     loginUrlTemplate = null;
+                    supportedScopesWithoutTranslations = null;
+                    supportedClaimsWithoutTranslations = null;
                 }
             } else {
                 if (logger.messageEnabled()) {

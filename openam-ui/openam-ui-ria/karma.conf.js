@@ -1,3 +1,5 @@
+process.env.CHROME_BIN = require("puppeteer").executablePath();
+
 module.exports = function (config) {
     config.set({
         basePath: ".",
@@ -7,6 +9,7 @@ module.exports = function (config) {
             { pattern: "target/test-classes/**/*.js", included: false },
             { pattern: "target/compiled/**/*.js", included: false },
             { pattern: "target/dependencies/libs/**/*.js", included: false },
+            { pattern: "target/dependencies-expanded/forgerock-ui-user/libs/**/*.js", included: false },
             { pattern: "node_modules/chai/chai.js", included: false },
             { pattern: "node_modules/sinon-chai/lib/sinon-chai.js", included: false }
         ],
@@ -28,7 +31,13 @@ module.exports = function (config) {
         colors: true,
         logLevel: config.LOG_INFO,
         autoWatch: true,
-        browsers: ["PhantomJS"],
-        singleRun: false
+        browsers: [process.env.DISABLE_PUPPETEER_SANDBOX ? "ChromeHeadlessNoSandbox" : "ChromeHeadless"],
+        singleRun: false,
+        customLaunchers: {
+            ChromeHeadlessNoSandbox: {
+                base: "ChromeHeadless",
+                flags: ["--no-sandbox"]
+            }
+        }
     });
 };

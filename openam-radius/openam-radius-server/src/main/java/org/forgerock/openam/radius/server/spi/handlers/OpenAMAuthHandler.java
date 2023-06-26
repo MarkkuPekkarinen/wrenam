@@ -13,6 +13,7 @@
  *
  * Copyrighted 2015 Intellectual Reserve, Inc (IRI)
  * Portions Copyrighted 2016 ForgeRock AS.
+ * Portions Copyrighted 2022-2023 Wren Security
  */
 package org.forgerock.openam.radius.server.spi.handlers;
 
@@ -30,8 +31,8 @@ import javax.security.auth.callback.ConfirmationCallback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 
-import org.forgerock.guava.common.base.Strings;
-import org.forgerock.guava.common.eventbus.EventBus;
+import org.wrensecurity.guava.common.base.Strings;
+import org.wrensecurity.guava.common.eventbus.EventBus;
 import org.forgerock.openam.radius.common.AccessAccept;
 import org.forgerock.openam.radius.common.AccessChallenge;
 import org.forgerock.openam.radius.common.AccessReject;
@@ -74,16 +75,16 @@ import com.sun.identity.shared.debug.Debug;
  *      |                                      .
  *      | AccessRequest                        .
  *      | [username + password]                .
- *      + -----------------------------------> +
+ *      + -----------------------------------&gt; +
  *      .                                      | ac = new AuthContext(realm)
  *      .                                      | ac.login(VIA_CHAIN, chain)
  *      .                                      |
  *      .   at a minimum the auth chain used   | ac.hasMoreRequirements()
  *      .   must have a first module that      | callback[] cbs = ac.getRequirements(true)
- *      .   accepts username and password -->  | find nameCallback and inject username
+ *      .   accepts username and password --&gt;  | find nameCallback and inject username
  *      .                                      | find passwordCallback and inject password
  *      . AccessReject                         |
- *      + <----------------------------------- + if unable to find name/password callbacks or inject values
+ *      + &lt;----------------------------------- + if unable to find name/password callbacks or inject values
  *      .                                      |
  *      .                                      +-- while ac.hasMoreRequirements()
  *      .                                      .    | callback[] cbs = ac.getRequirements(true)
@@ -93,11 +94,11 @@ import com.sun.identity.shared.debug.Debug;
  * callback
  *      . AccessChallenge                      .    .   |
  *      . [message + state(n)]                 .    .   |
- *      + <---------------------------------------------+
+ *      + &lt;---------------------------------------------+
  *      |                                      .    .   .
  *      | AccessRequest                        .    .   .
  *      | [username + answer + state(n)]       .    .   .
- *      + --------------------------------------------->+
+ *      + ---------------------------------------------&gt;+
  *      .                                      .    .   | inject value into cbs(n)
  *      .                                      .    +---+
  *      .                                      .    |
@@ -105,10 +106,10 @@ import com.sun.identity.shared.debug.Debug;
  *      .                                      +----+
  *      .                                      |
  *      . AccessAccept                         | s = ac.getStatus()
- *      + <----------------------------------- + if s == SUCCESS
+ *      + &lt;----------------------------------- + if s == SUCCESS
  *      .                                      |
  *      . AccessReject                         |
- *      + <----------------------------------- + all else
+ *      + &lt;----------------------------------- + all else
  *      |                                      .
  *      |                                      .
  * </pre>
@@ -217,7 +218,6 @@ public class OpenAMAuthHandler implements AccessRequestHandler {
      *            - provides methods that the handler can use to obtain information about the context in which the
      *            request was made, for example the name and IP address of the client from which the request was
      *            received.
-     * @return
      * @throws RadiusProcessingException
      *             - when the response can not be sent.
      */

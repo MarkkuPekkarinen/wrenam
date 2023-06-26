@@ -1,23 +1,24 @@
 /*
-* The contents of this file are subject to the terms of the Common Development and
-* Distribution License (the License). You may not use this file except in compliance with the
-* License.
-*
-* You can obtain a copy of the License at legal/CDDLv1.0.txt. See the License for the
-* specific language governing permission and limitations under the License.
-*
-* When distributing Covered Software, include this CDDL Header Notice in each file and include
-* the License file at legal/CDDLv1.0.txt. If applicable, add the following below the CDDL
-* Header, with the fields enclosed by brackets [] replaced by your own identifying
-* information: "Portions copyright [year] [name of copyright owner]".
-*
-* Copyright 2014-2015 ForgeRock AS.
-*/
+ * The contents of this file are subject to the terms of the Common Development and
+ * Distribution License (the License). You may not use this file except in compliance with the
+ * License.
+ *
+ * You can obtain a copy of the License at legal/CDDLv1.1.txt. See the License for the
+ * specific language governing permission and limitations under the License.
+ *
+ * When distributing Covered Software, include this CDDL Header Notice in each file and include
+ * the License file at legal/CDDLv1.1.txt. If applicable, add the following below the CDDL
+ * Header, with the fields enclosed by brackets [] replaced by your own identifying
+ * information: "Portions copyright [year] [name of copyright owner]".
+ *
+ * Copyright 2014-2015 ForgeRock AS.
+ * Portions Copyright 2021 Wren Security.
+ */
 package org.forgerock.openam.cts.monitoring.impl.connections;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.BDDMockito.verifyZeroInteractions;
+import static org.mockito.BDDMockito.verifyNoInteractions;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -49,7 +50,7 @@ public class MonitoredCTSConnectionFactoryTest {
     @Test
     public void shouldAddToFailedConnectionOnError() throws Exception {
         //given
-        doThrow(Exception.class).when(connectionFactory).create();
+        doThrow(DataLayerException.class).when(connectionFactory).create();
 
         //when
         try {
@@ -87,7 +88,7 @@ public class MonitoredCTSConnectionFactoryTest {
 
         //then
         verify(connectionFactory).createAsync();
-        verifyZeroInteractions(monitoringStore);
+        verifyNoInteractions(monitoringStore);
         promise.handleException(new DataLayerException("reason"));
         verify(monitoringStore).addConnection(false);
     }

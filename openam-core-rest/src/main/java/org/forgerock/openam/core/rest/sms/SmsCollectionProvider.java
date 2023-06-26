@@ -13,6 +13,7 @@
  *
  * Copyright 2015-2016 ForgeRock AS.
  * Portions Copyrighted 2015 Nomura Research Institute, Ltd.
+ * Portions Copyrighted 2022-2023 Wren Security
  */
 
 package org.forgerock.openam.core.rest.sms;
@@ -69,7 +70,7 @@ import org.forgerock.api.models.Paths;
 import org.forgerock.api.models.Resource;
 import org.forgerock.api.models.Schema;
 import org.forgerock.api.models.VersionedPath;
-import org.forgerock.guava.common.base.Optional;
+import org.wrensecurity.guava.common.base.Optional;
 import org.forgerock.http.ApiProducer;
 import org.forgerock.http.routing.ApiVersionRouterContext;
 import org.forgerock.http.routing.UriRouterContext;
@@ -288,8 +289,11 @@ public class SmsCollectionProvider extends SmsResourceProvider {
             ServiceConfigManager scm = getServiceConfigManager(context);
             ServiceConfig config = parentSubConfigFor(context, scm);
             checkedInstanceSubConfig(context, resourceId, config);
-            if (isDefaultCreatedAuthModule(context, resourceId)) {
-                scm.removeOrganizationConfiguration(realmFor(context), null);
+            if (isDefaultCreatedAuthModule(context, resourceId) && config.getSubConfig(resourceId) == null) {
+                Map<?, ?> attrs = config.getAttributesWithoutDefaults();
+                if (attrs != null) {
+                    config.removeAttributes(attrs.keySet());
+                }
             } else {
                 config.removeSubConfig(resourceId);
             }

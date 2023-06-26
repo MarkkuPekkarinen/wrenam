@@ -25,6 +25,7 @@
  * $Id: UpgradeUtils.java,v 1.18 2009/09/30 17:35:24 goodearth Exp $
  *
  * Portions Copyrighted 2011-2016 ForgeRock AS.
+ * Portions Copyright 2023 Wren Security
  */
 
 package org.forgerock.openam.upgrade;
@@ -247,7 +248,7 @@ public class UpgradeUtils {
      */
     public static SSOToken getSSOToken() {
         if (ssoToken == null) {
-            ssoToken = (SSOToken) AccessController.doPrivileged(
+            ssoToken = AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         }
 
@@ -303,7 +304,7 @@ public class UpgradeUtils {
         try {
             ServiceManager serviceManager = new ServiceManager(adminSSOToken);
 
-            serviceStream = (InputStream) new ByteArrayInputStream(xml.getBytes());
+            serviceStream = new ByteArrayInputStream(xml.getBytes());
             serviceManager.registerServices(serviceStream);
         } catch (SSOException ssoe) {
             debug.error(classMethod + ssoe.getMessage());
@@ -830,7 +831,7 @@ public class UpgradeUtils {
      * @param schemaType the schemaType
      * @param attributeName name of the attribute
      * @param defaultValues a set of values to be added to the attribute
-     * @throws <code>UpgradeException</code> if there is an error.
+     * @throws UpgradeException if there is an error.
      * @supported.api
      */
     public static void addAttributeDefaultValues(
@@ -873,7 +874,7 @@ public class UpgradeUtils {
      * @param choiceValuesMap a set of choice values values to
      *        be added to the attribute, the key is the i18NKey and
      *        the values it the choice value
-     * @throws <code>UpgradeException</code> if there is an error.
+     * @throws UpgradeException if there is an error.
      */
 
     public static void addAttributeChoiceValues(
@@ -1082,7 +1083,7 @@ public class UpgradeUtils {
      *
      * @param serviceName name of the service.
      * @param value the i18NFileName attribute value.
-     * @throws <code>UpgradeException</code> when there is an error.
+     * @throws UpgradeException when there is an error.
      */
     public static void seti18NFileName(
             String serviceName,
@@ -1107,7 +1108,7 @@ public class UpgradeUtils {
      *
      * @param serviceName name of the service.
      * @param revisionNumber the revisionNumber of the service.
-     * @throws <code>UpgradeException</code> if there is an error.
+     * @throws UpgradeException if there is an error.
      */
     public static void setServiceRevision(
             String serviceName,
@@ -1483,7 +1484,7 @@ public class UpgradeUtils {
     /**
      * Imports service data.
      * @param fileName the file containing the data in xml format.
-     * @throws <code>UpgradeException</code> on error
+     * @throws UpgradeException on error
      */
     public static void importServiceData(
             String fileName)
@@ -1529,7 +1530,6 @@ public class UpgradeUtils {
      * Imports service data
      *
      * @param fileList list of files to be imported.
-     * @throws UpgradeException
      */
     public static void importServiceData(List<String> fileList)
             throws UpgradeException {
@@ -1601,7 +1601,6 @@ public class UpgradeUtils {
      * Imports new service schema.
      *
      * @param fileList list of files
-     * @throws UpgradeException
      */
     public static void importNewServiceSchema(
             List<String> fileList) throws UpgradeException {
@@ -1969,7 +1968,6 @@ public class UpgradeUtils {
      *
      * @param serverInstance the server instance value
      * @param serverId the server identifier
-     * @throws UpgradeException if there is an error.
      */
     public static void createServiceInstance(
             String serverInstance, String serverId) {
@@ -1992,12 +1990,10 @@ public class UpgradeUtils {
      *
      * @param serverInstance the server instance value
      * @param serverId the server identifier
-     * @throws UpgradeException if there is an error.
      */
     public static void createServiceInstance(
             String serverInstance, String serverId,
             Set values,String serverConfigXML) {
-            //throws UpgradeException {
         String classMethod = "UpgradeUtils:createServiceInstance : ";
         if (debug.messageEnabled()) {
             debug.message(classMethod + "serverInstance :" + serverInstance);
@@ -2780,7 +2776,7 @@ public class UpgradeUtils {
                 Enumeration e = p.propertyNames();
                 while (e.hasMoreElements()) {
                     String oldPattern = (String) e.nextElement();
-                    String newPattern = (String) p.getProperty(oldPattern);
+                    String newPattern = p.getProperty(oldPattern);
                     String oldAtPattern = "@" + oldPattern + "@" ;
                     if (line != null && line.contains(oldAtPattern)) {
                          line = line.replaceAll(oldAtPattern, newPattern);

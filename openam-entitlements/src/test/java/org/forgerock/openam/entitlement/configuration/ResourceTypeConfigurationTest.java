@@ -12,6 +12,7 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Copyright 2015-2016 ForgeRock AS.
+ * Portions Copyright 2021-2022 Wren Security.
  */
 
 package org.forgerock.openam.entitlement.configuration;
@@ -20,7 +21,7 @@ import com.iplanet.sso.SSOException;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
-import org.forgerock.guava.common.collect.Sets;
+import org.wrensecurity.guava.common.collect.Sets;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -28,8 +29,8 @@ import javax.security.auth.Subject;
 
 import java.util.*;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -79,7 +80,7 @@ public class ResourceTypeConfigurationTest {
         Map<String, Set<String>> attributes = new HashMap<>();
         attributes.put("name", names);
         when(subSubServiceConfig.getAttributes()).thenReturn(attributes);
-        when(resourceTypeServiceConfig.getOrgConfig(any(Subject.class), anyString())).thenReturn(serviceConfig);
+        when(resourceTypeServiceConfig.getOrgConfig(any(), anyString())).thenReturn(serviceConfig);
     }
 
 }

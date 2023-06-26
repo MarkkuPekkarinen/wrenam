@@ -12,6 +12,7 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Copyright 2015-2016 ForgeRock AS.
+ * Portions copyright 2022 Wren Security
  */
 
 package org.forgerock.openam.upgrade.steps;
@@ -36,7 +37,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.forgerock.guava.common.base.Joiner;
+import org.wrensecurity.guava.common.base.Joiner;
 import org.forgerock.openam.sm.datalayer.api.ConnectionFactory;
 import org.forgerock.openam.sm.datalayer.api.ConnectionType;
 import org.forgerock.openam.sm.datalayer.api.DataLayer;
@@ -62,7 +63,7 @@ import com.sun.identity.sm.ServiceSchemaManager;
 public class SchemaXmlAttributeUpgradeStep extends AbstractUpgradeStep {
 
     private static final String PROGRESS = "upgrade.schema.xml.attributes.progress";
-    private static final int AM_14 = 1400;
+    private static final String AM_14 = "14.0.0";
 
     private Map<String, Function<Document, Boolean, XPathExpressionException>> serviceModifications;
     private XPath xpath = XPathFactory.newInstance().newXPath();

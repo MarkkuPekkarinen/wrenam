@@ -13,6 +13,7 @@
  *
  * Copyright 2015 ForgeRock AS.
  * Portions Copyrighted 2016 Agile Digital Engineering
+ * Portions Copyrighted 2022 Wren Security
  */
 
 package org.forgerock.openam.sts.soap.publish;
@@ -25,7 +26,7 @@ import com.google.inject.Scopes;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.ws.security.sts.provider.SecurityTokenServiceProvider;
 import org.assertj.core.api.Assertions;
-import org.forgerock.guava.common.collect.Sets;
+import org.wrensecurity.guava.common.collect.Sets;
 import org.forgerock.json.resource.ResourceException;
 import org.forgerock.openam.sts.AMSTSConstants;
 import org.forgerock.openam.sts.TokenType;
@@ -36,7 +37,7 @@ import org.forgerock.openam.sts.soap.config.user.SoapSTSInstanceConfig;
 import org.forgerock.openam.sts.soap.config.user.SoapSTSKeystoreConfig;
 import org.forgerock.openam.sts.soap.healthcheck.HealthCheck;
 import org.forgerock.openam.sts.soap.healthcheck.HealthCheckImpl;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.slf4j.Logger;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -46,7 +47,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

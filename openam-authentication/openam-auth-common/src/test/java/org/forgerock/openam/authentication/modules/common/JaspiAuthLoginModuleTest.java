@@ -12,6 +12,7 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Copyright 2013-2016 ForgeRock AS.
+ * Portions Copyright 2017-2021 Wren Security.
  */
 
 package org.forgerock.openam.authentication.modules.common;
@@ -21,6 +22,7 @@ import static org.mockito.BDDMockito.eq;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
 import static org.testng.AssertJUnit.*;
 
 import java.security.Principal;
@@ -36,7 +38,7 @@ import javax.security.auth.message.MessageInfo;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -77,6 +79,7 @@ public class JaspiAuthLoginModuleTest {
         };
 
         AMLoginModuleBinder amLoginModuleBinder = mock(AMLoginModuleBinder.class);
+        when(amLoginModuleBinder.getCallbackHandler()).thenReturn(mock(CallbackHandler.class));
 
         jaspiAuthLoginModule.setAMLoginModule(amLoginModuleBinder);
 
@@ -130,7 +133,7 @@ public class JaspiAuthLoginModuleTest {
         Callback[] callbacks = new Callback[0];
         int state = ISAuthConstants.LOGIN_START;
 
-        given(jaspiAuthWrapper.validateRequest(Matchers.<MessageInfo>anyObject(), Matchers.<Subject>anyObject()))
+        given(jaspiAuthWrapper.validateRequest(any(), any()))
                 .willReturn(AuthStatus.SUCCESS);
 
         //When
@@ -138,7 +141,7 @@ public class JaspiAuthLoginModuleTest {
 
         //Then
         assertTrue(processMethodCalled);
-        verify(jaspiAuthWrapper).validateRequest(Matchers.<MessageInfo>anyObject(), Matchers.<Subject>anyObject());
+        verify(jaspiAuthWrapper).validateRequest(any(), any());
         assertEquals(returnedState, ISAuthConstants.LOGIN_SUCCEED);
     }
 
@@ -149,7 +152,7 @@ public class JaspiAuthLoginModuleTest {
         Callback[] callbacks = new Callback[0];
         int state = ISAuthConstants.LOGIN_START;
 
-        given(jaspiAuthWrapper.validateRequest(Matchers.<MessageInfo>anyObject(), Matchers.<Subject>anyObject()))
+        given(jaspiAuthWrapper.validateRequest(any(), any()))
                 .willReturn(AuthStatus.SEND_SUCCESS);
 
         //When
@@ -157,7 +160,7 @@ public class JaspiAuthLoginModuleTest {
 
         //Then
         assertTrue(processMethodCalled);
-        verify(jaspiAuthWrapper).validateRequest(Matchers.<MessageInfo>anyObject(), Matchers.<Subject>anyObject());
+        verify(jaspiAuthWrapper).validateRequest(any(), any());
         assertEquals(returnedState, ISAuthConstants.LOGIN_SUCCEED);
     }
 
@@ -168,7 +171,7 @@ public class JaspiAuthLoginModuleTest {
         Callback[] callbacks = new Callback[0];
         int state = ISAuthConstants.LOGIN_START;
 
-        given(jaspiAuthWrapper.validateRequest(Matchers.<MessageInfo>anyObject(), Matchers.<Subject>anyObject()))
+        given(jaspiAuthWrapper.validateRequest(any(), any()))
                 .willReturn(AuthStatus.SEND_FAILURE);
 
         //When
@@ -183,7 +186,7 @@ public class JaspiAuthLoginModuleTest {
 
         //Then
         assertTrue(processMethodCalled);
-        verify(jaspiAuthWrapper).validateRequest(Matchers.<MessageInfo>anyObject(), Matchers.<Subject>anyObject());
+        verify(jaspiAuthWrapper).validateRequest(any(), any());
         assertTrue(exceptionCaught);
         assertEquals(exception.getErrorCode(), "authFailed");
     }
@@ -195,7 +198,7 @@ public class JaspiAuthLoginModuleTest {
         Callback[] callbacks = new Callback[0];
         int state = ISAuthConstants.LOGIN_START;
 
-        given(jaspiAuthWrapper.validateRequest(Matchers.<MessageInfo>anyObject(), Matchers.<Subject>anyObject()))
+        given(jaspiAuthWrapper.validateRequest(any(), any()))
                 .willReturn(AuthStatus.SEND_CONTINUE);
 
         //When
@@ -203,7 +206,7 @@ public class JaspiAuthLoginModuleTest {
 
         //Then
         assertTrue(processMethodCalled);
-        verify(jaspiAuthWrapper).validateRequest(Matchers.<MessageInfo>anyObject(), Matchers.<Subject>anyObject());
+        verify(jaspiAuthWrapper).validateRequest(any(), any());
         assertEquals(returnedState, ISAuthConstants.LOGIN_IGNORE);
     }
 

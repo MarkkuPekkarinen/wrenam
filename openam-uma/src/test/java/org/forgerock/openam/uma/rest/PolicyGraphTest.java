@@ -22,7 +22,7 @@ import static org.forgerock.json.JsonValue.*;
 import static org.forgerock.openam.uma.UmaConstants.BackendPolicy.*;
 import static org.forgerock.openam.uma.UmaConstants.UmaPolicy.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.anySet;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.verify;
@@ -64,12 +64,12 @@ import org.testng.annotations.Test;
  *     |                           VIEW                          |
  *     |                             |                           |
  *     V                             V                           V
- *    Bob ---- DELETE, EDIT ----> Charlie                      Dave
+ *    Bob ---- DELETE, EDIT ----&qt; Charlie                      Dave
  *     ^                             |                           |
  *     |                           VIEW                          |
  *     |                             |                           |
  *     |                             V                           |
- *     +---------- DELETE --------- Ed <----- VIEW, DELETE ------+
+ *     +---------- DELETE --------- Ed &lt;----- VIEW, DELETE ------+
  * </pre>
  * For all tests, this will be the current graph that will be computed from
  * the policies, and where updates are required, the graph will be making

@@ -12,6 +12,7 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Copyright 2015-2016 ForgeRock AS.
+ * Portions Copyright 2021 Wren Security.
  */
 
 package org.forgerock.openam.uma.rest;
@@ -20,7 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.forgerock.json.JsonValue.json;
 import static org.forgerock.json.JsonValue.object;
 import static org.forgerock.openam.utils.CollectionUtils.asSet;
-import static org.forgerock.util.test.assertj.AssertJPromiseAssert.assertThat;
+import static org.forgerock.util.test.assertj.AssertJPromiseAssert.assertThatPromise;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -56,7 +58,7 @@ import org.forgerock.util.promise.Promise;
 import org.forgerock.util.promise.Promises;
 import org.forgerock.util.query.QueryFilter;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -103,7 +105,7 @@ public class ResourceSetResourceTest {
         Promise<ResourceResponse, ResourceException> readPromise = resource.readInstance(context, "RESOURCE_SET_ID", request);
 
         //Then
-        assertThat(readPromise).succeeded().withObject().isNotNull();
+        assertThatPromise(readPromise).succeeded().withObject().isNotNull();
     }
     
     @Test
@@ -117,7 +119,7 @@ public class ResourceSetResourceTest {
         Promise<ActionResponse, ResourceException> promise = resource.actionCollection(context, request);
 
         //Then
-        assertThat(promise).failedWithException().isInstanceOf(NotSupportedException.class);
+        assertThatPromise(promise).failedWithException().isInstanceOf(NotSupportedException.class);
     }
 
     @Test
@@ -133,7 +135,7 @@ public class ResourceSetResourceTest {
         Promise<QueryResponse, ResourceException> promise = resource.queryCollection(context, request, handler);
 
         //Then
-        assertThat(promise).failedWithException().isInstanceOf(NotSupportedException.class);
+        assertThatPromise(promise).failedWithException().isInstanceOf(NotSupportedException.class);
     }
 
     @Test
@@ -156,7 +158,7 @@ public class ResourceSetResourceTest {
         given(contextHelper.getUserId(context)).willReturn("RESOURCE_OWNER_ID");
         given(request.getQueryFilter()).willReturn(queryFilter);
         given(resourceSetService.getResourceSets(eq(context), eq("REALM"),
-                Matchers.<ResourceSetWithPolicyQuery>anyObject(), eq("RESOURCE_OWNER_ID"), eq(false))).willReturn(resourceSetsPromise);
+                any(), eq("RESOURCE_OWNER_ID"), eq(false))).willReturn(resourceSetsPromise);
 
         //When
         Promise<QueryResponse, ResourceException> promise = resource.queryCollection(context, request, handler);
@@ -173,7 +175,7 @@ public class ResourceSetResourceTest {
                         QueryFilter.equalTo("name", "NAME"),
                         QueryFilter.equalTo("clientId", "myclient")));
 
-        assertThat(promise).succeeded().withObject().isNotNull();
+        assertThatPromise(promise).succeeded().withObject().isNotNull();
 
     }
 
@@ -194,7 +196,7 @@ public class ResourceSetResourceTest {
         Promise<ActionResponse, ResourceException> promise = resource.actionCollection(context, request);
 
         //Then
-        assertThat(promise).succeeded().withObject().isNotNull();
+        assertThatPromise(promise).succeeded().withObject().isNotNull();
         JsonValue jsonContent = promise.getOrThrowUninterruptibly().getJsonContent();
         assertThat(jsonContent.asMap()).isEmpty();
 
@@ -217,7 +219,7 @@ public class ResourceSetResourceTest {
         Promise<ActionResponse, ResourceException> promise = resource.actionCollection(context, request);
 
         //Then
-        assertThat(promise).failedWithException().isInstanceOf(ResourceException.class);
+        assertThatPromise(promise).failedWithException().isInstanceOf(ResourceException.class);
     }
 
     @Test
@@ -233,7 +235,7 @@ public class ResourceSetResourceTest {
         Promise<ActionResponse, ResourceException> promise = resource.actionCollection(context, request);
 
         //Then
-        assertThat(promise).failedWithException().isInstanceOf(NotSupportedException.class);
+        assertThatPromise(promise).failedWithException().isInstanceOf(NotSupportedException.class);
     }
 
     @Test

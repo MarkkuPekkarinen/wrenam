@@ -12,6 +12,7 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Copyright 2015-2016 ForgeRock AS.
+ * Portions copyright 2023 Wren Security
  */
 
 package com.sun.identity.cli;
@@ -28,12 +29,15 @@ import org.forgerock.openam.entitlement.service.EntitlementConfigurationFactory;
 import org.forgerock.openam.entitlement.service.ResourceTypeService;
 import org.forgerock.openam.entitlement.service.ResourceTypeServiceImpl;
 import org.forgerock.openam.entitlement.utils.NullNotificationBroker;
+import org.forgerock.openam.notifications.LocalOnly;
 import org.forgerock.openam.notifications.NotificationBroker;
 import org.forgerock.openam.session.SessionCache;
 import org.forgerock.openam.shared.guice.CloseableHttpClientProvider;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.Scopes;
+import com.google.inject.name.Names;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.opensso.EntitlementService;
 
@@ -49,6 +53,7 @@ public class CliGuiceModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(NotificationBroker.class).to(NullNotificationBroker.class);
+        bind(NotificationBroker.class).annotatedWith(LocalOnly.class).to(NullNotificationBroker.class);
         bind(ResourceTypeConfiguration.class).to(ResourceTypeConfigurationImpl.class);
         bind(ResourceTypeService.class).to(ResourceTypeServiceImpl.class);
         bind(ConstraintValidator.class).to(ConstraintValidatorImpl.class);
@@ -62,6 +67,8 @@ public class CliGuiceModule extends AbstractModule {
 
         bind(SessionCache.class).toInstance(SessionCache.getInstance());
 
-        bind(Client.class).toProvider(CloseableHttpClientProvider.class);
+        bind(Client.class)
+                .annotatedWith(Names.named("LogWriter"))
+                .toProvider(CloseableHttpClientProvider.class).in(Scopes.SINGLETON);
     }
 }

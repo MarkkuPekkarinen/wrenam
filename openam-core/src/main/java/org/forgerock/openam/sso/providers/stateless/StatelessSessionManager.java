@@ -11,7 +11,8 @@
 * Header, with the fields enclosed by brackets [] replaced by your own identifying
 * information: "Portions copyright [year] [name of copyright owner]".
 *
-* Copyright 2015-2016 ForgeRock AS.
+* Copyright 2015-2017 ForgeRock AS.
+* Portions Copyright 2023 Wren Security
 */
 
 package org.forgerock.openam.sso.providers.stateless;
@@ -106,7 +107,6 @@ public class StatelessSessionManager {
      *
      * @param tokenId Non null TokenID to use for parsing.
      * @return A non null StatelessSessionID.
-     * @throws SessionException
      */
     public StatelessSession generate(String tokenId) throws SessionException {
         return generate(new SessionID(tokenId));
