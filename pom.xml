@@ -28,7 +28,7 @@
 
     <groupId>org.wrensecurity.wrenam</groupId>
     <artifactId>wrenam-project</artifactId>
-    <version>15.0.0-M5-SNAPSHOT</version>
+    <version>15.0.0-M6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Wren:AM - Parent</name>
@@ -63,7 +63,7 @@
         <url>https://github.com/WrenSecurity/WrenAM</url>
         <connection>scm:git:git://github.com/WrenSecurity/WrenAM.git</connection>
         <developerConnection>scm:git:git@github.com:WrenSecurity/WrenAM.git</developerConnection>
-        <tag>15.0.0-M2</tag>
+        <tag>15.0.0-M5</tag>
     </scm>
 
     <repositories>
@@ -98,7 +98,7 @@
 
     <properties>
         <pgpVerifyKeysVersion>1.7.4</pgpVerifyKeysVersion>
-        <wrenBuildToolsVersion>1.1.1-SNAPSHOT</wrenBuildToolsVersion>
+        <wrenBuildToolsVersion>1.2.0</wrenBuildToolsVersion>
 
         <!-- Source code has to be Java 8 compliant (code base is not JPMS ready) -->
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -137,7 +137,7 @@
         <!-- XXX END Configuration under consideration -->
 
         <!-- https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-        <project.build.outputTimestamp>2023-06-26T13:57:21Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2023-07-17T14:14:20Z</project.build.outputTimestamp>
 
         <!-- Wren Security Dependencies -->
         <wrends.version>5.0.0</wrends.version>
@@ -1300,9 +1300,7 @@
                 <artifactId>maven-release-plugin</artifactId>
 
                 <configuration>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
                     <updateBranchVersions>true</updateBranchVersions>
-                    <goals>install javadoc:aggregate-jar deploy</goals>
                 </configuration>
             </plugin>
 
