@@ -1384,7 +1384,7 @@ public class LoginState {
                                 userDN + " with idletimeout to " +
                                 AGENT_SESSION_IDLE_TIME);
                     }
-                    session.setMaxSessionTime(Long.MAX_VALUE / 60);
+                    session.setMaxSessionTime(InternalSession.NON_EXPIRING_SESSION_LENGTH_MINUTES);
                     session.setMaxIdleTime(AGENT_SESSION_IDLE_TIME);
                     session.setMaxCachingTime(AGENT_SESSION_IDLE_TIME);
                 } else {
@@ -5254,7 +5254,7 @@ public class LoginState {
         if ((stateless && !restriction.isRestricted(getUserDN()) || isNoSession())) {
             return;
         }
-        authenticationSessionStore.promoteSession(sessionReference);
+        authenticationSessionStore.promoteSession(sessionReference, AdminTokenAction.isActiveLogin());
     }
 
     /**

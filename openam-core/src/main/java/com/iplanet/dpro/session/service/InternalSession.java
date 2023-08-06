@@ -25,6 +25,7 @@
  * $Id: InternalSession.java,v 1.21 2009/03/20 21:05:25 weisun2 Exp $
  *
  * Portions Copyrighted 2011-2016 ForgeRock AS.
+ * Portions Copyright 2023 Wren Security.
  */
 package com.iplanet.dpro.session.service;
 
@@ -64,16 +65,10 @@ import com.sun.identity.session.util.SessionUtilsWrapper;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import org.forgerock.guice.core.InjectorHolder;
-import org.forgerock.openam.cts.adapters.SessionAdapter;
-import org.forgerock.openam.cts.api.tokens.Token;
 import org.forgerock.openam.session.AMSession;
 import org.forgerock.openam.session.SessionEventType;
 import org.forgerock.openam.session.service.access.SessionPersistenceManager;
 import org.forgerock.openam.session.service.access.SessionPersistenceObservable;
-import org.forgerock.openam.session.service.access.persistence.InternalSessionPersistenceStore;
-import org.forgerock.openam.session.service.access.persistence.InternalSessionStore;
-import org.forgerock.openam.tokens.CoreTokenField;
-import org.forgerock.openam.tokens.TokenType;
 import org.forgerock.openam.utils.Time;
 import org.forgerock.util.Reject;
 import org.forgerock.util.annotations.VisibleForTesting;
@@ -87,10 +82,18 @@ import org.forgerock.util.annotations.VisibleForTesting;
  *
  */
 public class InternalSession implements Serializable, AMSession, SessionPersistenceObservable {
+
+    private static final long serialVersionUID = 1L;
+
     /**
      * Expiry time which is long enough to make sessions functionally non expiring.
      */
     public static final long NON_EXPIRING_SESSION_LENGTH_MINUTES = 42 * TimeUnit.DAYS.toMinutes(365);
+
+    /**
+     * Maximum non-expiring session idle time in minutes.
+     */
+    public static final long NON_EXPIRING_SESSION_MAX_IDLE_TIME = 30;
 
     /*
      * Session property names
@@ -335,6 +338,10 @@ public class InternalSession implements Serializable, AMSession, SessionPersiste
      *            Maximum Session Time
      */
     public void setMaxSessionTime(long maxSessionTimeInMinutes) {
+        if (maxSessionTimeInMinutes > NON_EXPIRING_SESSION_LENGTH_MINUTES) {
+            debug.warning("Setting maxSessionTimeInMinutes to a very large value that can lead to overflow: "
+                    + maxSessionTimeInMinutes);
+        }
         if (this.maxSessionTimeInMinutes != maxSessionTimeInMinutes) {
             this.maxSessionTimeInMinutes = maxSessionTimeInMinutes;
             notifyPersistenceManager();
@@ -355,6 +362,10 @@ public class InternalSession implements Serializable, AMSession, SessionPersiste
      * @param maxIdleTimeInMinutes
      */
     public void setMaxIdleTime(long maxIdleTimeInMinutes) {
+        if (maxIdleTimeInMinutes > NON_EXPIRING_SESSION_LENGTH_MINUTES) {
+            debug.warning("Setting maxIdleTimeInMinutes to a very large value that can lead to overflow: "
+                    + maxIdleTimeInMinutes);
+        }
         this.maxIdleTimeInMinutes = maxIdleTimeInMinutes;
         notifyPersistenceManager();
     }
@@ -371,11 +382,15 @@ public class InternalSession implements Serializable, AMSession, SessionPersiste
     /**
      * Sets the maximum caching time(in minutes) for the Internal Session.
      *
-     * @param t
+     * @param maxCachingTimeInMinutes
      *        Maximum Caching Time
      */
-    public void setMaxCachingTime(long t) {
-        maxCachingTimeInMinutes = t;
+    public void setMaxCachingTime(long maxCachingTimeInMinutes) {
+        if (maxCachingTimeInMinutes > NON_EXPIRING_SESSION_LENGTH_MINUTES) {
+            debug.warning("Setting maxCachingTimeInMinutes to a very large value that can lead to overflow: "
+                    + maxCachingTimeInMinutes);
+        }
+        this.maxCachingTimeInMinutes = maxCachingTimeInMinutes;
         notifyPersistenceManager();
     }
 
@@ -770,12 +785,14 @@ public class InternalSession implements Serializable, AMSession, SessionPersiste
     }
 
     /**
-     * Sets the willExpireFlag. This flag specify that whether the session will
-     * ever expire or not.
+     * Sets the willExpireFlag. This flag specify that whether the session will ever expire or not.
+     * <p>
+     * Note, that non-expiring sessions are still subject to max idle time. Clients are required to
+     * refresh session to keep it active.
      */
     public void setNonExpiring() {
         maxSessionTimeInMinutes = NON_EXPIRING_SESSION_LENGTH_MINUTES;
-        maxIdleTimeInMinutes = NON_EXPIRING_SESSION_LENGTH_MINUTES;
+        maxIdleTimeInMinutes = NON_EXPIRING_SESSION_MAX_IDLE_TIME;
         maxCachingTimeInMinutes = serviceConfig.getApplicationMaxCachingTime();
         willExpireFlag = false;
     }
@@ -932,7 +949,6 @@ public class InternalSession implements Serializable, AMSession, SessionPersiste
 
     /**
      * Returns the value of willExpireFlag.
-     *
      */
     public boolean willExpire() {
         return willExpireFlag;
