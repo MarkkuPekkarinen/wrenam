@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.wrensecurity.wrenam</groupId>
         <artifactId>wrenam-project</artifactId>
-        <version>15.0.0-M7-SNAPSHOT</version>
+        <version>15.0.0-RC2-SNAPSHOT</version>
     </parent>
 
     <artifactId>openam-restlet</artifactId>
@@ -102,6 +102,11 @@
 
         <!-- Test Dependencies -->
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.easytesting</groupId>
             <artifactId>fest-assert</artifactId>
         </dependency>
@@ -112,33 +117,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito2</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-easymock</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-testng</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>httpunit</groupId>
             <artifactId>httpunit</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-testng-common</artifactId>
         </dependency>
 
         <dependency>
