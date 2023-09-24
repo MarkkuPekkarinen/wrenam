@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.wrensecurity.wrenam</groupId>
         <artifactId>openam-authentication</artifactId>
-        <version>15.0.0-RC2-SNAPSHOT</version>
+        <version>15.0.0-RC3-SNAPSHOT</version>
     </parent>
 
     <artifactId>openam-auth-persistentcookie</artifactId>
@@ -41,11 +41,9 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>

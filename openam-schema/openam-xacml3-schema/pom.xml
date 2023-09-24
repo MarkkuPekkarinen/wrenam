@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.wrensecurity.wrenam</groupId>
         <artifactId>openam-schema</artifactId>
-        <version>15.0.0-RC2-SNAPSHOT</version>
+        <version>15.0.0-RC3-SNAPSHOT</version>
     </parent>
 
     <artifactId>openam-xacml3-schema</artifactId>
@@ -31,8 +31,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
     </dependencies>
 
