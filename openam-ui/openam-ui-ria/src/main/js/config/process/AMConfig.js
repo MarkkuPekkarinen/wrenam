@@ -12,6 +12,7 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Portions copyright 2011-2016 ForgeRock AS.
+ * Portions copyright 2024 Wren Security.
  */
 
 define([
@@ -96,7 +97,7 @@ define([
             var subRealm = conf.globalData.auth.subRealm || "/";
             window.location.href = `/${Constants.context}/realm/RMRealm?RMRealm.tblDataActionHref=${
                 encodeURIComponent(subRealm)
-                }`;
+            }`;
         }
     }, {
         startEvent: Constants.EVENT_REDIRECT_TO_JATO_FEDERATION,
@@ -106,15 +107,6 @@ define([
         ],
         processDescription (event, RedirectToLegacyConsole) {
             RedirectToLegacyConsole.global.federation();
-        }
-    }, {
-        startEvent: Constants.EVENT_REDIRECT_TO_JATO_DATASTORE,
-        description: "",
-        dependencies: [
-            "org/forgerock/openam/ui/admin/utils/RedirectToLegacyConsole"
-        ],
-        processDescription (event, RedirectToLegacyConsole) {
-            RedirectToLegacyConsole.realm.dataStores(event);
         }
     }, {
         startEvent: Constants.EVENT_REDIRECT_TO_JATO_PRIVILEGES,
@@ -213,14 +205,14 @@ define([
             "org/forgerock/openam/ui/user/login/tokens/SessionToken"
         ],
         processDescription (
-            event,
-            Configuration,
-            RealmsService,
-            ServicesService,
-            SessionValidator,
-            MaxIdleTimeLeftStrategy,
-            NavigationHelper,
-            SessionToken) {
+                event,
+                Configuration,
+                RealmsService,
+                ServicesService,
+                SessionValidator,
+                MaxIdleTimeLeftStrategy,
+                NavigationHelper,
+                SessionToken) {
             var queueName = "loginDialogAuthCallbacks",
                 authenticatedCallback,
                 sessionToken;
@@ -285,7 +277,7 @@ define([
                  * User may have sensetive information on screen so we exit them from the system when their session
                  * has expired with a message telling them as such
                  */
-                 // TODO move the logout logic to the Sesion Expiry view
+                // TODO move the logout logic to the Sesion Expiry view
                 return logout.default().then(() => {
                     Router.routeTo(Router.configuration.routes.sessionExpired, { trigger: true });
                 });
