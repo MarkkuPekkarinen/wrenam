@@ -12,8 +12,10 @@
  * information: "Portions copyright [year] [name of copyright owner]".
  *
  * Portions copyright 2014-2016 ForgeRock AS.
+ * Portions copyright 2024 Wren Security.
  */
 
+import $ from "jquery";
 import _ from "lodash";
 
 import { sessionAddInfo } from "store/actions/creators";
@@ -24,9 +26,9 @@ import Configuration from "org/forgerock/commons/ui/common/main/Configuration";
 import moment from "moment";
 
 const obj = new AbstractDelegate(`${Constants.host}/${Constants.context}/json/sessions`);
-const getSessionInfo = (token, options) => {
+const getSessionInfo = (options) => {
     return obj.serviceCall(_.merge({
-        url: `?_action=getSessionInfo&tokenId=${token}`,
+        url: "?_action=getSessionInfo",
         type: "POST",
         data: {},
         headers: {
@@ -35,16 +37,30 @@ const getSessionInfo = (token, options) => {
     }, options));
 };
 
-export const getTimeLeft = (token) => {
-    return getSessionInfo(token, { suppressSpinner: true }).then((sessionInfo) => {
-        const idleExpiration = moment(sessionInfo.maxIdleExpirationTime).diff(moment(), "seconds");
-        const maxExpiration = moment(sessionInfo.maxSessionExpirationTime).diff(moment(), "seconds");
-        return _.min([idleExpiration, maxExpiration]);
-    });
+export const getTimeLeft = () => {
+    // Number of seconds to indicate in case of network error (see WrenSecurity/wrenam#176)
+    const NETWORK_ERROR_EXPIRATION_SECONDS = 30;
+
+    return getSessionInfo({
+        suppressEvents: true,
+        suppressSpinner: true
+    }).then(
+        (sessionInfo) => {
+            const idleExpiration = moment(sessionInfo.maxIdleExpirationTime).diff(moment(), "seconds");
+            const maxExpiration = moment(sessionInfo.maxSessionExpirationTime).diff(moment(), "seconds");
+            return _.min([idleExpiration, maxExpiration]);
+        },
+        (jqXhr, textStatus, errorThrown) => {
+            if (jqXhr.status === 0) { // ignore network error
+                return $.Deferred().resolve(NETWORK_ERROR_EXPIRATION_SECONDS);
+            }
+            return $.Deferred().reject(jqXhr, textStatus, errorThrown);
+        }
+    );
 };
 
-export const updateSessionInfo = (token, options) => {
-    return getSessionInfo(token, options).then((response) => {
+export const updateSessionInfo = (options) => {
+    return getSessionInfo(options).then((response) => {
         store.dispatch(sessionAddInfo({
             realm: response.realm,
             sessionHandle: response.sessionHandle
@@ -53,7 +69,7 @@ export const updateSessionInfo = (token, options) => {
     });
 };
 
-export const isSessionValid = (token) => getSessionInfo(token).then((response) => _.has(response, "username"));
+export const isSessionValid = () => getSessionInfo().then((response) => _.has(response, "username"));
 
 export const logout = () => {
     const gotoUrl = Configuration.gotoURL;
