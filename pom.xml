@@ -28,7 +28,7 @@
 
     <groupId>org.wrensecurity.wrenam</groupId>
     <artifactId>wrenam-project</artifactId>
-    <version>15.1.4-SNAPSHOT</version>
+    <version>15.2.0-M2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Wren:AM - Parent</name>
@@ -137,13 +137,13 @@
         <!-- XXX END Configuration under consideration -->
 
         <!-- https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-        <project.build.outputTimestamp>2025-01-22T12:07:56Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2025-06-13T11:04:31Z</project.build.outputTimestamp>
 
         <!-- Wren Security Dependencies -->
         <wrends.version>5.0.0</wrends.version>
         <wrensec-commons.version>22.6.0</wrensec-commons.version>
         <wrensec-guava.version>18.0.5</wrensec-guava.version>
-        <wrensec-ui.version>23.1.0</wrensec-ui.version>
+        <wrensec-ui.version>23.2.2</wrensec-ui.version>
 
         <!-- Test Dependencies -->
         <mockito.version>5.5.0</mockito.version>
@@ -195,7 +195,7 @@
         <jersey-bundle.version>1.19.1</jersey-bundle.version>
         <jersey-oauth.version>1.19.4</jersey-oauth.version>
         <saaj-impl.version>1.5.3</saaj-impl.version>
-        <xmlsec.version>2.3.3</xmlsec.version>
+        <xmlsec.version>2.3.5</xmlsec.version>
 
         <!-- Database Related Dependencies -->
         <hikaricp.version>2.4.1</hikaricp.version>
@@ -214,7 +214,7 @@
         <amazon.sns.version>1.10.72</amazon.sns.version>
         <asciidoctorj.version>2.5.10</asciidoctorj.version>
         <geoip.version>2.0.0</geoip.version>
-        <json.version>20230618</json.version>
+        <json.version>20231013</json.version>
         <mail.version>1.5.1</mail.version>
 
         <!-- Deprecated Dependencies (TBD) -->

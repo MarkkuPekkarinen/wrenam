@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.wrensecurity.wrenam</groupId>
         <artifactId>openam-ui</artifactId>
-        <version>15.1.4-SNAPSHOT</version>
+        <version>15.2.0-M2-SNAPSHOT</version>
     </parent>
 
     <artifactId>openam-ui-api</artifactId>
@@ -91,8 +91,8 @@
 
                 <configuration>
                     <installDirectory>${project.parent.basedir}</installDirectory>
-                    <nodeVersion>v18.16.0</nodeVersion>
-                    <npmVersion>8.19.4</npmVersion>
+                    <nodeVersion>v22.16.0</nodeVersion>
+                    <npmVersion>11.4.1</npmVersion>
                     <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
                     <npmDownloadRoot>https://wrensecurity.jfrog.io/artifactory/api/npm/npm-virtual/npm/-/</npmDownloadRoot>
                 </configuration>
