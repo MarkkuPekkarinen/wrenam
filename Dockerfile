@@ -3,7 +3,7 @@ FROM --platform=$BUILDPLATFORM debian:bullseye-slim AS project-build
 # Install build dependencies
 RUN \
   apt-get update && \
-  apt-get install -y --no-install-recommends openjdk-17-jdk maven unzip chromium git && \
+  apt-get install -y --no-install-recommends openjdk-21-jdk maven unzip chromium git && \
   # Workaround Chromium binary path for arm64 (see https://github.com/puppeteer/puppeteer/blob/v4.0.0/src/Launcher.ts#L110)
   ln -s /usr/bin/chromium /usr/bin/chromium-browser
 
@@ -31,7 +31,7 @@ RUN \
   unzip openam-distribution/openam-distribution-ssoconfiguratortools/target/SSOConfiguratorTools-$(cat /build/version.txt).zip -d /build/ssoconf
 
 
-FROM tomcat:9-jdk17-temurin
+FROM tomcat:10-jdk17-temurin
 
 # Set environment variables
 ENV \
@@ -41,9 +41,11 @@ ENV \
     --add-exports=java.base/sun.security.x509=ALL-UNNAMED \
     --add-exports=java.management/sun.management=ALL-UNNAMED \
     --add-exports=java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED \
+    --add-opens=java.base/java.io=ALL-UNNAMED \
     --add-opens=java.base/java.lang.reflect=ALL-UNNAMED \
     --add-opens=java.base/java.net=ALL-UNNAMED \
     --add-opens=java.base/java.util.regex=ALL-UNNAMED \
+    --add-opens=java.base/sun.nio.ch=ALL-UNNAMED \
     -Dcom.sun.identity.configuration.directory=/srv/wrenam \
   " \
   CATALINA_OPTS="-server -Xmx2g -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m"
