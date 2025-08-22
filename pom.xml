@@ -97,7 +97,7 @@
     </repositories>
 
     <properties>
-        <pgpVerifyKeysVersion>1.8.5-SNAPSHOT</pgpVerifyKeysVersion>
+        <pgpVerifyKeysVersion>1.9.0</pgpVerifyKeysVersion>
         <wrenBuildToolsVersion>1.2.0</wrenBuildToolsVersion>
 
         <!-- Source code has to be Java 8 compliant (code base is not JPMS ready) -->
@@ -183,7 +183,7 @@
         <java-ipv6.version>0.17</java-ipv6.version>
         <javassist.version>3.29.1-GA</javassist.version>
         <restlet.version>2.6.0</restlet.version>
-        <slf4j.version>1.7.36</slf4j.version>
+        <slf4j.version>2.0.17</slf4j.version>
         <snakeyaml.version>2.2</snakeyaml.version>
 
         <!-- WS / RS Related Dependencies -->
@@ -410,26 +410,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
-            <dependency>
-                <groupId>org.wrensecurity.commons</groupId>
-                <artifactId>json-resource-http</artifactId>
-                <version>${wrensec-commons.version}</version>
-
-                <exclusions>
-                    <!-- Replaced by Jakarta -->
-                    <exclusion>
-                        <groupId>com.sun.mail</groupId>
-                        <artifactId>javax.mail</artifactId>
-                    </exclusion>
-
-                    <exclusion>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-osgi</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
 
             <dependency>
                 <groupId>org.wrensecurity.commons</groupId>
